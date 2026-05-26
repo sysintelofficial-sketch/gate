@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Intelligence | Secure Gateway</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto+Mono:wght@300;500&display=swap" rel="stylesheet">
+    <style>
+        /* Core Reset & Background */
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: #050914; /* Deep Cyber Navy */
+            color: #ffffff;
+            font-family: 'Roboto Mono', monospace;
+            overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        /* Moving Data Background */
+        canvas {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1; opacity: 0.6;
+        }
+
+        /* The Vault Interface */
+        .vault-container {
+            position: relative; z-index: 10;
+            background: rgba(10, 15, 30, 0.85);
+            backdrop-filter: blur(15px);
+            border: 1px solid #00f0ff; /* Neon Cyan Border */
+            box-shadow: 0 0 40px rgba(0, 240, 255, 0.2), inset 0 0 20px rgba(0, 240, 255, 0.1);
+            border-radius: 12px;
+            padding: 50px 40px;
+            width: 90%; max-width: 550px;
+            text-align: center;
+            transition: all 0.5s ease-in-out;
+            box-sizing: border-box; /* Added to keep padding within width */
+        }
+
+        /* Branding */
+        .brand {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem; font-weight: 900;
+            letter-spacing: 4px; color: #00f0ff;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 0.8rem; color: #8892b0;
+            letter-spacing: 2px; text-transform: uppercase;
+            margin-bottom: 30px;
+        }
+
+        /* Live Metrics Section (The Value Hook) */
+        .metrics-box {
+            background: rgba(0, 0, 0, 0.5);
+            border-left: 4px solid #00ff66; /* Neon Green for Profit */
+            padding: 15px; margin-bottom: 30px;
+            border-radius: 4px;
+        }
+
+        .metrics-title {
+            font-size: 0.75rem; color: #a8b2d1; margin-bottom: 8px;
+        }
+
+        .live-metric {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem; font-weight: 700; color: #00ff66;
+            text-shadow: 0 0 10px rgba(0, 255, 102, 0.4);
+            display: flex; justify-content: center; align-items: center; gap: 15px;
+        }
+
+        .arrow { font-size: 1.2rem; animation: pulseArrow 1.5s infinite; }
+
+        /* Lock Mechanism */
+        .input-group { margin-bottom: 25px; position: relative; }
+        
+        input[type="password"] {
+            width: 100%; padding: 15px; box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #4a5568;
+            color: #00f0ff; font-family: 'Roboto Mono', monospace;
+            font-size: 1.2rem; text-align: center; letter-spacing: 5px;
+            border-radius: 6px; outline: none; transition: 0.3s;
+        }
+
+        input[type="password"]:focus {
+            border-color: #00f0ff;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+        }
+
+        .unlock-btn {
+            width: 100%; padding: 16px;
+            background: linear-gradient(90deg, #005f73, #0a9396);
+            border: none; border-radius: 6px;
+            color: white; font-family: 'Orbitron', sans-serif;
+            font-size: 1rem; font-weight: 700; letter-spacing: 2px;
+            cursor: pointer; text-transform: uppercase;
+            transition: 0.3s; box-shadow: 0 4px 15px rgba(10, 147, 150, 0.4);
+        }
+
+        .unlock-btn:hover {
+            background: linear-gradient(90deg, #0a9396, #00f0ff);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
+            transform: translateY(-2px); color: #050914;
+        }
+
+        /* Animations */
+        @keyframes pulseArrow {
+            0% { transform: translateX(-5px); opacity: 0.5; }
+            50% { transform: translateX(5px); opacity: 1; }
+            100% { transform: translateX(-5px); opacity: 0.5; }
+        }
+
+        .access-granted { border-color: #00ff66 !important; box-shadow: 0 0 50px rgba(0, 255, 102, 0.5) !important; }
+        .access-denied { border-color: #ff003c !important; box-shadow: 0 0 30px rgba(255, 0, 60, 0.5) !important; animation: shake 0.4s; }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-10px); }
+            100% { transform: translateX(0); }
+        }
+
+        /* =========================================
+           RESPONSIVE DESIGN (Media Queries) 
+           ========================================= */
+        
+        /* Tablet view */
+        @media (max-width: 768px) {
+            .vault-container {
+                padding: 40px 30px;
+                width: 85%;
+            }
+            .brand { font-size: 1.3rem; }
+            .live-metric { font-size: 1.5rem; gap: 10px; }
+        }
+
+        /* Mobile view */
+        @media (max-width: 480px) {
+            .vault-container {
+                padding: 30px 20px;
+                width: 92%;
+            }
+            .brand { 
+                font-size: 1.1rem; 
+                letter-spacing: 2px; 
+            }
+            .subtitle { 
+                font-size: 0.65rem; 
+                letter-spacing: 1px; 
+                margin-bottom: 20px;
+            }
+            .metrics-box {
+                padding: 12px;
+                margin-bottom: 20px;
+            }
+            .live-metric { 
+                font-size: 1.25rem; 
+                gap: 8px;
+            }
+            .arrow { font-size: 1rem; }
+            input[type="password"] { 
+                font-size: 1rem; 
+                padding: 12px; 
+                letter-spacing: 3px;
+            }
+            .unlock-btn { 
+                padding: 12px; 
+                font-size: 0.85rem; 
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="optimizationNetwork"></canvas>
+
+    <div class="vault-container" id="vaultBox">
+        <div class="brand">SYSTEM INTELLIGENCE</div>
+        <div class="subtitle">Deterministic Logic & Operations Research</div>
+        
+        <div class="metrics-box">
+            <div class="metrics-title">LIVE OPTIMIZATION POTENTIAL</div>
+            <div class="live-metric">
+                <span id="currentEff">82.4%</span>
+                <span class="arrow">➔</span>
+                <span id="targetEff">98.9%</span>
+            </div>
+            <div style="font-size: 0.6rem; color: #a8b2d1; margin-top: 10px;">PROFIT MARGIN EXPANSION DETECTED</div>
+        </div>
+
+        <div class="input-group">
+            <input type="password" id="accessKey" placeholder="••••••••" autocomplete="off">
+        </div>
+        <button class="unlock-btn" onclick="verifyAccess()">Engage Optimization</button>
+        
+        <div style="margin-top: 20px; font-size: 0.7rem; color: #4a5568;">
+            <span style="color: #00f0ff;">⚡</span> SECURE MILITARY-GRADE ENCRYPTION LAYER
+        </div>
+    </div>
+
+    <script>
+        // --- 1. Background Animation (Deterministic Logic Network) ---
+        const canvas = document.getElementById('optimizationNetwork');
+        const ctx = canvas.getContext('2d');
+        
+        function setCanvasSize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        setCanvasSize();
+
+        // Responsive Canvas on Window Resize (Important for Mobile Rotation)
+        window.addEventListener('resize', () => {
+            setCanvasSize();
+            initParticles();
+        });
+
+        let particlesArray = [];
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2;
+                this.speedX = Math.random() * 1 - 0.5;
+                this.speedY = Math.random() * 1 - 0.5;
+            }
+            update() {
+                this.x += this.speedX; this.y += this.speedY;
+                if (this.size > 0.2) this.size -= 0.01;
+                // Boundary check so particles don't get lost
+                if (this.x < 0 || this.x > canvas.width) this.speedX = -this.speedX;
+                if (this.y < 0 || this.y > canvas.height) this.speedY = -this.speedY;
+            }
+            draw() {
+                ctx.fillStyle = '#00f0ff';
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+            }
+        }
+        
+        function initParticles() {
+            particlesArray = [];
+            // Reduced particle count slightly for better mobile performance
+            const particleCount = window.innerWidth < 768 ? 60 : 100;
+            for (let i = 0; i < particleCount; i++) particlesArray.push(new Particle());
+        }
+        
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update(); particlesArray[i].draw();
+                for (let j = i; j < particlesArray.length; j++) {
+                    const dx = particlesArray[i].x - particlesArray[j].x;
+                    const dy = particlesArray[i].y - particlesArray[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < 100) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(0, 240, 255, ${0.1 - distance/1000})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(particlesArray[i].x, particlesArray[i].y);
+                        ctx.lineTo(particlesArray[j].x, particlesArray[j].y);
+                        ctx.stroke();
+                    }
+                }
+                if (particlesArray[i].size <= 0.2) { 
+                    particlesArray.splice(i, 1); 
+                    i--; 
+                    particlesArray.push(new Particle()); 
+                }
+            }
+            requestAnimationFrame(animateParticles);
+        }
+        initParticles(); animateParticles();
+
+        // --- 2. Live Metrics Animation (The Psychological Hook) ---
+        setInterval(() => {
+            let eff = parseFloat(document.getElementById('currentEff').innerText);
+            let change = (Math.random() * 0.4 - 0.2); // Fluctuates slightly
+            if(eff > 85) change = -Math.abs(change); if(eff < 80) change = Math.abs(change);
+            document.getElementById('currentEff').innerText = (eff + change).toFixed(1) + "%";
+        }, 2000);
+
+        // --- 3. Gateway Logic ---
+        function verifyAccess() {
+            const key = document.getElementById('accessKey').value;
+            const vaultBox = document.getElementById('vaultBox');
+            const btn = document.querySelector('.unlock-btn');
+
+            // Set your Master Password Here
+            if (key === "admin123") { 
+                vaultBox.classList.remove('access-denied');
+                vaultBox.classList.add('access-granted');
+                btn.innerText = "ACCESS GRANTED";
+                btn.style.background = "#00ff66";
+                btn.style.color = "#000";
+                
+                // Redirect to the actual Python/Streamlit/Taipy project link
+                setTimeout(() => {
+                    // Yahan aap apne main project ka link daal sakte hain
+                    window.location.href = "https://your-main-python-app-url.com"; 
+                }, 1500);
+            } else {
+                vaultBox.classList.remove('access-granted');
+                vaultBox.classList.add('access-denied');
+                btn.innerText = "ACCESS DENIED";
+                btn.style.background = "#ff003c";
+                setTimeout(() => { 
+                    vaultBox.classList.remove('access-denied'); 
+                    btn.innerText = "ENGAGE OPTIMIZATION";
+                    btn.style.background = "linear-gradient(90deg, #005f73, #0a9396)";
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>
